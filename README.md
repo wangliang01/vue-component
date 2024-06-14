@@ -1,7 +1,28 @@
-# Vue 3 + Vite
+## 使用方式
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+**安装依赖**
+```bash
+# 使用npm
+npm install el-pro-select 
 
-## Recommended IDE Setup
+# 使用yarn 
+yarn add el-pro-select
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+# 使用pnpm
+pnpm add el-pro-select
+```
+
+**使用组件**
+```js 
+// main.js
+import { createApp } from 'vue'
+import './style.css'
+import App from './App.vue'
+import ElProSelect from 'el-pro-select' // 引入组件
+import 'el-pro-select/style' // 引入样式
+
+const app = createApp(App)
+app.use(ElProSelect)
+app.mount('#app')
+
+```
