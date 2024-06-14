@@ -1,9 +1,6 @@
 <template>
   <el-select v-model="value" v-bind="attrs" @change="handleSelect" filterable :filter-method="filterMethod">
     <el-option v-for="item in computedOptions" :key="item.value" :label="item.label" :value="item.value">
-      <!-- <template #label>
-        <div v-html="item.label"></div>
-      </template> -->
       <div v-html="item.highlight"></div>
     </el-option>
   </el-select>
@@ -12,8 +9,11 @@
 <script setup>
 import { ref, useAttrs, watchEffect, computed } from 'vue';
 import { filterMap } from 'sdm2'
-import pinyin from 'js-pinyin';
-pinyin.setOptions({ checkPolyphone: true, charCase: 1 });
+import pinyin from 'pinyin'
+import { ElSelect, ElOption } from 'element-plus'
+import 'element-plus/theme-chalk/index.css'
+import './style.css'
+
 const props = defineProps({
   modelValue: {
     type: String,
@@ -25,6 +25,15 @@ const props = defineProps({
   }
 })
 
+function toPinyinString(text, style = pinyin.STYLE_NORMAL) {
+  return pinyin(text, {
+    style,
+    heteronym: true,              // 启用多音字模式
+    segment: true,
+  }).reduce((acc, cur) => {
+    return acc + cur[0]
+  }, '')
+}
 
 
 const emit = defineEmits(['update:modelValue'])
@@ -34,13 +43,11 @@ const attrs = useAttrs()
 const value = ref('')
 const query = ref('')
 
-console.log(pinyin.getFullChars('圳'))
 const handleSelect = (val) => {
   emit('update:modelValue', val)
 }
 
 const filterMethod = (q) => {
-  console.log('q', q)
   query.value = q
 }
 
@@ -50,17 +57,15 @@ const computedOptions = computed(() => {
     // 忽略大小写匹配
     ignoreCase: true,
     matchStr: (item) => {
-      return item.label + pinyin.getFullChars(item.label)
+      return item.label + toPinyinString(item.label)
     },
     onMatched: (matchedStr) => {
       return `<span class="highlight">${matchedStr}</span>`
     },
     onMap: ({ str, origin }) => {
-      console.log("onMap", str, pinyin.getFullChars(origin.label), origin.label)
       const reg = new RegExp(`${origin.label}<span class="highlight"`)
       return {
-        // str 是否匹配origin.label<span class="highlight"
-        highlight: (str.startsWith(origin.label)) ? origin.label : str.replace(pinyin.getFullChars(origin.label), ''),
+        highlight: (str.startsWith(origin.label)) ? origin.label : str.replace(toPinyinString(origin.label), ''),
         ...origin,
       }
     }
@@ -73,7 +78,5 @@ watchEffect(() => {
 </script>
 
 <style lang="scss" scoped>
-:v-deep(.el-select__input) {
-  margin-left: 0
-}
+
 </style>
