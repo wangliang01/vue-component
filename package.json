@@ -1,8 +1,9 @@
 {
   "name": "el-pro-select",
   "private": false,
-  "version": "0.0.3",
+  "version": "0.0.5",
   "type": "module",
+  "keywords": ["select", "el-select", "el-pro-select"],
   "files": [
     "dist"
   ],
